@@ -22,7 +22,7 @@ if __name__ == '__main__':
 		rangoNum = range(int(rango[0])-1,int(rango[1]))
 
 	print("Corriendo instancias...")
-	print("instancia","Vo","%dHeur","t(seg)")
+	print("instancia,","Vo,","VHeur,","%dHeur,","t(seg)")
 
 	for i in rangoNum:
 		solOpt = int(instancias[i][1])
@@ -31,8 +31,19 @@ if __name__ == '__main__':
 
 		try:
 			resultado = subprocess.check_output("./branchAndBound .\\" + path,timeout=30)
-		except:
-			print("TIMED OUT")
+		except subprocess.TimeoutExpired as err:
+			resultado = err.output
+			salida = resultado.decode('utf-8')
+			salida = salida.split("\n")
+
+			solucionHeur = int(salida[0].split("\t")[1])
+			desvHeur = 0
+			if solOpt != 0:
+				desvHeur = 100*((solOpt - solucionHeur)/solOpt)
+			print(path + "," + str(solOpt) + "," \
+				 + str(solucionHeur) + ","
+				 + str.format("{0:.03f}",desvHeur) + "," \
+				 + "T")
 			continue
 		salida = resultado.decode('utf-8')
 		salida = salida.split("\n")
@@ -48,7 +59,7 @@ if __name__ == '__main__':
 		desvHeur = 0
 		if (solOpt != 0):
 			desvHeur = 100*((solOpt - solucionHeur)/solOpt)
-		print(path + "\t" + str(solOpt) + "\t" \
-				 + str(solucionHeur) + "\t"
-				 + str.format("{0:.03f}",desvHeur) + "\t" \
+		print(path + "," + str(solOpt) + "," \
+				 + str(solucionHeur) + ","
+				 + str.format("{0:.03f}",desvHeur) + "," \
 				 + str.format("{0:.03f}",time))
