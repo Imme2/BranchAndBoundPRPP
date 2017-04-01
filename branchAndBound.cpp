@@ -172,11 +172,6 @@ int main(int argc, char* argv[]){
 	cout << "Valor Solucion\t" <<valorMejorSol << endl;
 	double secs = (double)t/CLOCKS_PER_SEC;
 	cout << "Tiempo\t" << secs << endl;
-
-	for (lado i: mejorSol){
-		cout << i.vf << " ";
-	}
-	cout << endl;
 }
 
 
