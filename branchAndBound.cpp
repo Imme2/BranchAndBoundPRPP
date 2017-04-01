@@ -172,6 +172,11 @@ int main(int argc, char* argv[]){
 	cout << "Valor Solucion\t" <<valorMejorSol << endl;
 	double secs = (double)t/CLOCKS_PER_SEC;
 	cout << "Tiempo\t" << secs << endl;
+
+	for (lado i: mejorSol){
+		cout << i.vf << " ";
+	}
+	cout << endl;
 }
 
 
@@ -193,7 +198,6 @@ vector<lado> branchAndBound(int valorSolInicial, vector<lado> solInicial){
 // para reducir el espacio de busqueda de un dfs normal
 void dfs(){
 	lado ultimo = solParcial[solParcial.size()-1];
-
 
 	// Si se enuentra una mejor solucion, se guarda.
 	if (ultimo.vf == DEPOSITO){
@@ -225,7 +229,7 @@ void dfs(){
 		// debe ser escogido.
 		if (!cicloNegativo(i,solParcial) and 
 			!estaEnSolParcial(i,solParcial) and 
-			!repiteCiclo(i,solParcial) and
+			//!repiteCiclo(i,solParcial) and
 			cumpleAcotamiento(i,solParcial))
 		{
 			agregarLado(i,solParcial);
@@ -299,18 +303,19 @@ bool usadoEnSolParcial(lado l,vector<lado> &solParcial){
 
 // Funcion que chequea si un lado ha sido usado por segunda vez
 //  en la solucion parcial
-// Siempre que el lado exista con beneficio = 0 entonces es que
-//  se ha usado ya dos veces.
+// NOTA: que el lado exista con beneficio = 0 NO IMPLICA que
+// haya sido usado dos veces.
 bool estaEnSolParcial(lado l,vector<lado> &solParcial){
+	int count = 0;
 	for (lado i: solParcial){
-		if (i.vf == l.vf and i.vi == l.vi and i.beneficio == 0){
-			return true;
+		if (i.vf == l.vf and i.vi == l.vi){
+			count++;
 		}
-		if (i.vi == l.vf and i.vf == l.vi and i.beneficio == 0){
-			return true;
+		if (i.vi == l.vf and i.vf == l.vi){
+			count++;
 		}
 	}
-	return false;
+	return count >= 2;
 }
 
 // Funcion que verifica si un lado esta repitiendo un ciclo
@@ -318,8 +323,11 @@ bool estaEnSolParcial(lado l,vector<lado> &solParcial){
 bool repiteCiclo(lado l,vector<lado> &solParcial){
 	int blado = l.beneficio - l.costo;
 	for (lado lsol: solParcial){
+		if (lsol.vi == DEPOSITO and lsol.vf == DEPOSITO){
+			continue;
+		}
 		if (lsol.vi == l.vf){
-			if (lsol.beneficio - lsol.costo < blado){
+			if (lsol.beneficio - lsol.costo <= blado){
 				return true;
 			}
 		}

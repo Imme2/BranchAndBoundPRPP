@@ -30,7 +30,7 @@ if __name__ == '__main__':
 		path = "instanciasPRPP/" + instancias[i][0]
 
 		try:
-			resultado = subprocess.check_output(["timeout","30s","./branchAndBound",path])
+			resultado = subprocess.check_output("./branchAndBound .\\" + path,timeout=30)
 		except:
 			print("TIMED OUT")
 			continue
